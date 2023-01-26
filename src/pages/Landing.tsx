@@ -11,16 +11,13 @@ import {
   extendTheme,
 } from "@mui/joy";
 import { MdArrowForwardIos } from "react-icons/md";
+import Api from "../utils/Api";
 
 const customTheme = extendTheme({
   typography: {
     display1: {
-      // `--joy` is the default CSS variable prefix.
-      // If you have a custom prefix, you have to use it instead.
-      // For more details about the custom prefix, go to https://mui.com/joy-ui/customization/using-css-variables/#custom-prefix
       background:
         "linear-gradient(-30deg, var(--joy-palette-primary-400), var(--joy-palette-success-400))",
-      // `Webkit*` properties must come later.
       WebkitBackgroundClip: "text",
       WebkitTextFillColor: "transparent",
     },
@@ -29,18 +26,19 @@ const customTheme = extendTheme({
 
 export default function Landing() {
   const [key, setKey] = useState("");
-  const [toolTipOpen, setToolTipOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [isToolTipOpen, setIsToolTipOpen] = useState(false);
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    if (key) {
-      console.log(key);
-    }
+    setLoading(true);
+    Api.setKey(key);
   };
 
   return (
     <Box
       component="form"
+      onSubmit={handleSubmit}
       sx={{
         height: "100vh",
         width: "100vw",
@@ -84,7 +82,7 @@ export default function Landing() {
           variant="soft"
           color="info"
           onClick={() => {
-            setToolTipOpen(true);
+            setIsToolTipOpen(true);
           }}
         >
           Request a key
@@ -93,12 +91,13 @@ export default function Landing() {
           variant="soft"
           type="submit"
           color="success"
+          loading={loading}
           endDecorator={<MdArrowForwardIos />}
         >
           Get started
         </Button>
       </Box>
-      {toolTipOpen && (
+      {isToolTipOpen && (
         <Card
           sx={{
             position: "relative",
